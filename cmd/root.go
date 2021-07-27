@@ -18,46 +18,83 @@ package cmd
 import (
 	"fmt"
 	"os"
+
+	"github.com/lucassabreu/gh-collab-manager/internal"
 	"github.com/spf13/cobra"
 
 	"github.com/spf13/viper"
 )
 
-var cfgFile string
+var (
+	cfgFile string
+
+	version   string
+	commit    string
+	buildDate string
+)
+
+const GH_TOKEN_KEY = "github-token"
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "gh-collab-manager",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+	Use:           "gh-collab-manager",
+	Short:         "Add and remove users from repositories",
+	SilenceErrors: true,
+	SilenceUsage:  true,
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+	RunE: func(cmd *cobra.Command, args []string) error {
+
+		if v, _ := cmd.Flags().GetBool("version"); v {
+			cmd.Printf(
+				"Version: %s, Commit: %s, Build At: %s\n",
+				version, commit, buildDate,
+			)
+			return nil
+		}
+
+		stringRepos, _ := cmd.Flags().GetStringArray("repo")
+		toadd, _ := cmd.Flags().GetStringArray("add")
+		toRemove, _ := cmd.Flags().GetStringArray("remove")
+
+		repos, err := internal.MapStringItoRepository(stringRepos)
+		if err != nil {
+			return err
+		}
+
+		return internal.Execute(
+			viper.GetString(GH_TOKEN_KEY),
+			repos,
+			toadd, toRemove,
+		)
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
-func Execute() {
+func Execute(v, c, d string) {
+	version = v
+	commit = c
+	buildDate = d
+
 	cobra.CheckErr(rootCmd.Execute())
 }
 
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.gh-collab-manager.yaml)")
 
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.Flags().StringP(GH_TOKEN_KEY, "t", "", "github token to access the api (defaults to $GITHUB_TOKEN)")
+	_ = viper.BindPFlag(GH_TOKEN_KEY, rootCmd.Flags().Lookup(GH_TOKEN_KEY))
+	_ = viper.BindEnv(GH_TOKEN_KEY, "GITHUB_TOKEN")
+
+	rootCmd.Flags().StringArrayP("repo", "R", []string{}, "repositories to add/remove collaborators")
+	rootCmd.Flags().StringArrayP("add", "a", []string{}, "handle of collaborators to invite to the repositories")
+	rootCmd.Flags().StringArrayP("remove", "r", []string{}, "handle of collaborators to remove from the repositories")
+
+	rootCmd.Flags().BoolP("version", "v", false, "shows cli version")
 }
 
 // initConfig reads in config file and ENV variables if set.

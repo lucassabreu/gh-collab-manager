@@ -17,6 +17,12 @@ package main
 
 import "github.com/lucassabreu/gh-collab-manager/cmd"
 
+var (
+	version = "dev"
+	commit  = "none"
+	date    = "unknown"
+)
+
 func main() {
-	cmd.Execute()
+	cmd.Execute(version, commit, date)
 }
