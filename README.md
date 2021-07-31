@@ -6,6 +6,7 @@ A cli to help invite and/or remove multiple collaborators from multiple GitHub r
 [![Release](https://img.shields.io/github/release/lucassabreu/gh-collab-manager.svg?classes=badges)](https://github.com/lucassabreu/gh-collab-manager/releases/latest)
 [![Build Status](https://github.com/lucassabreu/gh-collab-manager/actions/workflows/release.yml/badge.svg?classes=badges)](.github/workflows/release.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/lucassabreu/gh-collab-manager?classes=badges)](https://goreportcard.com/report/github.com/lucassabreu/gh-collab-manager)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Flucassabreu%2Fgh-collab-manager.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Flucassabreu%2Fgh-collab-manager?ref=badge_shield)
 
 Usage
 -----
@@ -68,3 +69,7 @@ Changelog
 ---------
 
 [Link](CHANGELOG.md)
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Flucassabreu%2Fgh-collab-manager.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Flucassabreu%2Fgh-collab-manager?ref=badge_large)
